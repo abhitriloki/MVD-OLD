@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "899141049077",
+    "firebase_url": "https://mamta-vahan-default-rtdb.firebaseio.com",
+    "project_id": "mamta-vahan",
+    "storage_bucket": "mamta-vahan.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:899141049077:android:2f2577417607bd6cce83bc",
+        "android_client_info": {
+          "package_name": "com.mamta_vahan.customer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "899141049077-rgsfg7qtue2hp6v1ealrorjtk7akrp6s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNWz0Uu9eypNNgab7EGHEEjt6JP1CjM2w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "899141049077-rgsfg7qtue2hp6v1ealrorjtk7akrp6s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:899141049077:android:ebcd548e8dcd0841ce83bc",
+        "android_client_info": {
+          "package_name": "com.mamta_vahan.driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "899141049077-rgsfg7qtue2hp6v1ealrorjtk7akrp6s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNWz0Uu9eypNNgab7EGHEEjt6JP1CjM2w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "899141049077-rgsfg7qtue2hp6v1ealrorjtk7akrp6s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:899141049077:android:cfc3343abf4f995cce83bc",
+        "android_client_info": {
+          "package_name": "com.mamta_vahan.maker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "899141049077-rgsfg7qtue2hp6v1ealrorjtk7akrp6s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNWz0Uu9eypNNgab7EGHEEjt6JP1CjM2w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "899141049077-rgsfg7qtue2hp6v1ealrorjtk7akrp6s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
