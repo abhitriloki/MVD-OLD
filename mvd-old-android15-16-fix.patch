@@ -1,0 +1,212 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: android-fix <android-fix@example.com>
+Date: Fri, 08 Aug 2025 00:00:00 +0530
+Subject: [PATCH] Android 15/16 compatibility: JDK17, compileSdk 36, AGP+Gradle updates, manifest & Firebase init
+
+--- a/android/app/build.gradle
++++ b/android/app/build.gradle
+@@ -1,200 +1,230 @@
+ android {
+-    compileSdkVersion 31
++    // Updated for Android 15 & 16 compatibility
++    compileSdk = 36
+
+     defaultConfig {
+-        applicationId "com.mamta_vahan.maker"
+-        minSdkVersion 21
+-        targetSdkVersion 31
++        applicationId "com.mamta_vahan.maker"
++        minSdk = 21
++        targetSdk = 36
+         versionCode 1
+         versionName "1.0"
+     }
+
+-    compileOptions {
+-        sourceCompatibility = 1.8
+-        targetCompatibility = 1.8
+-    }
++    // Use Java 17 toolchain
++    compileOptions {
++        sourceCompatibility JavaVersion.VERSION_17
++        targetCompatibility JavaVersion.VERSION_17
++    }
++
++    kotlinOptions {
++        jvmTarget = "17"
++    }
++
++    // Recommended: Java toolchain for Gradle
++    java {
++        toolchain {
++            languageVersion = JavaLanguageVersion.of(17)
++        }
++    }
+ }
+
+--- a/android/build.gradle
++++ b/android/build.gradle
+@@ -1,200 +1,220 @@
+ buildscript {
+-    ext {
+-        buildToolsVersion = "30.0.2"
+-        minSdkVersion = 21
+-        compileSdkVersion = 31
+-        targetSdkVersion = 31
+-        kotlinVersion = "1.6.10"
+-    }
+-
+-    repositories {
+-        google()
+-        mavenCentral()
+-    }
+-
+-    dependencies {
+-        classpath("com.android.tools.build:gradle:7.0.4")
+-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+-    }
++    // Using plugins {} DSL at top-level in newer AGP - keep compatibility fallback
++}
++
++plugins {
++    id 'com.android.application' version '8.9.0' apply false
++    id 'com.android.library' version '8.9.0' apply false
++    id 'org.jetbrains.kotlin.android' version '1.8.22' apply false
++}
++
++// Note: If the project uses older buildscript {} form, keep both blocks as needed.
+
+ allprojects {
+     repositories {
+-        mavenLocal()
+-        google()
+-        mavenCentral()
+-        jcenter() // <-- remove if present in older projects
++        mavenLocal()
++        google()
++        mavenCentral()
+     }
+ }
+
+--- a/android/gradle/wrapper/gradle-wrapper.properties
++++ b/android/gradle/wrapper/gradle-wrapper.properties
+@@ -1,10 +1,10 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+ distributionUrl=https\://services.gradle.org/distributions/gradle-8.11.1-all.zip
+ zipStoreBase=GRADLE_USER_HOME
+ zipStorePath=wrapper/dists
+
+--- a/gradle.properties
++++ b/gradle.properties
+@@ -1,200 +1,220 @@
+ # Project-wide Gradle settings.
+ org.gradle.jvmargs=-Xmx4096m
+ android.useAndroidX=true
+ android.enableJetifier=true
++# Uncomment and set this to your JDK 17 location (Linux example shown)
++# org.gradle.java.home=/usr/lib/jvm/java-17-openjdk-amd64
++
++# Windows example:
++# org.gradle.java.home=C:\\Program Files\\Java\\jdk-17
++
++# macOS example:
++# org.gradle.java.home=/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home
+
+--- a/android/app/src/main/AndroidManifest.xml
++++ b/android/app/src/main/AndroidManifest.xml
+@@ -1,200 +1,220 @@
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+     package="com.mamta_vahan.maker">
+
++    <!-- Needed if app uses notifications on Android 13+ -->
++    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
++
+     <application
+         android:name=".MainApplication"
+         android:label="@string/app_name"
+         android:icon="@mipmap/ic_launcher"
+         android:roundIcon="@mipmap/ic_launcher_round">
+
+-        <activity android:name=".MainActivity">
++        <!-- Ensure exported is set for activities with intent filters -->
++        <activity android:name=".MainActivity" android:exported="true">
+             <intent-filter>
+                 <action android:name="android.intent.action.MAIN" />
+                 <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
+         </activity>
+
+     </application>
+
+ </manifest>
+
+--- a/android/app/src/main/java/com/mamta_vahan/maker/MainApplication.java
++++ b/android/app/src/main/java/com/mamta_vahan/maker/MainApplication.java
+@@ -1,200 +1,240 @@
+ package com.mamta_vahan.maker;
+
+ import android.app.Application;
++import com.google.firebase.FirebaseApp;
+ import com.facebook.react.PackageList;
+ import com.facebook.react.ReactApplication;
+ import com.facebook.react.ReactNativeHost;
+ import com.facebook.react.ReactPackage;
+ import com.facebook.soloader.SoLoader;
+
+ public class MainApplication extends Application implements ReactApplication {
+
+     private final ReactNativeHost mReactNativeHost = ...
+
+     @Override
+     public void onCreate() {
+         super.onCreate();
++        // Ensure Firebase is initialized before any Firebase-dependent module loads
++        try {
++            FirebaseApp.initializeApp(this);
++        } catch (Exception e) {
++            // initialization might already be done in another process or fail gracefully
++            e.printStackTrace();
++        }
+         SoLoader.init(this, /* native exopackage */ false);
+     }
+
+     // rest of the class...
+ }
+
+--- a/README_ANDROID_TOOLING.md
++++ b/README_ANDROID_TOOLING.md
+@@ -0,0 +1,120 @@
++Android 15/16 Build & JDK 17 Setup (for Jules)
++------------------------------------------------
++
++1) Install JDK 17
++   - Linux (Ubuntu/Debian): sudo apt install openjdk-17-jdk
++   - macOS (Homebrew): brew install temurin17
++   - Windows: Install Eclipse Temurin or Adoptium JDK 17 and note the install path
++
++2) Set org.gradle.java.home in gradle.properties to point to JDK 17:
++   Example (Linux):
++     org.gradle.java.home=/usr/lib/jvm/java-17-openjdk-amd64
++   Example (macOS):
++     org.gradle.java.home=/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home
++   Example (Windows):
++     org.gradle.java.home=C:\\Program Files\\Java\\jdk-17
++
++3) Clean and build:
++   cd android
++   ./gradlew clean
++   ./gradlew assembleDebug --stacktrace
++
++4) If build fails with "Unsupported class file major version 65", double-check the JDK version that Gradle is using:
++   java -version
++   and ensure gradle.properties org.gradle.java.home is set correctly.
++
++5) If any native dependency fails, rebuild native modules or update the dependency versions to ones compatible with API 36.
++
++6) After a successful build, test on device/emulator with Android 13, 14, 15 and 16 (API 33, 34, 35, 36) as applicable.
++
++Contact: Add notes/logs to ticket and push them to the repo root for review.
++
+-- 
+2.40.1
